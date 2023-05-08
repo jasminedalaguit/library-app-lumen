@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Category;
-
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Arr;
 class CategoriesController extends Controller
 {
     /**
@@ -19,6 +21,21 @@ class CategoriesController extends Controller
         return response()->json($categories);
     }
 
+    public function showBooksInCat(Request $request, $id)
+    {
+        $category = Category::with('books')->find($id);
+
+        $books  = [];
+
+        foreach ($category->books as $key => $val) {
+
+            $books[$key] = $val;
+            $books[$key]['file_url'] = url('uploads/' . $val->file_id . '.pdf'); 
+
+        }
+
+        return response()->json($books);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -64,9 +81,9 @@ class CategoriesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
         $this->validate($request, [
-            'category_name' => 'required|unique:categories'
+            'category_name' => ['required',
+            Rule::unique('categories')->ignore($id)]
         ]);
 
         $category = Category::find($id);

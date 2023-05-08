@@ -30,4 +30,14 @@ class Book extends Model implements AuthenticatableContract, AuthorizableContrac
     // protected $hidden = [
     //     'password',
     // ];
+
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_id', 'id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\Book;
+use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -17,9 +19,11 @@ class BooksController extends Controller
     public function index()
     {
         // Get all books from database
-        $books = Book::all();
+        $books = Book::with('category')->get();
+        $mybooks=[];
         return response()->json($books);
     }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -84,9 +88,9 @@ class BooksController extends Controller
         // Update book by ID 
 
         $this->validate($request, [
-            'book_title' => 'required',
+            'book_title' => ['required', Rule::unique('books')->ignore($id)],
             'author' => 'required',
-            'category_id' => 'required|numeric:books',
+            'category_id' => 'required',
             'file_id' => 'required',
         ]);
 

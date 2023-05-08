@@ -7,6 +7,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Lumen\Auth\Authorizable;
 
 class Category extends Model implements AuthenticatableContract, AuthorizableContract
@@ -30,4 +31,13 @@ class Category extends Model implements AuthenticatableContract, AuthorizableCon
     // protected $hidden = [
     //     'password',
     // ];
+
+    public function books()
+    {
+        return $this->hasMany(Book::class);
+    }
+    
 }
+
+
+

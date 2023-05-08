@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -61,7 +63,7 @@ class AuthController extends Controller
         ]);
 
         $username = $request->input('username');
-        $password = $request->input('password'); 
+        $password = md5($request->input('password')); 
          
         $user = User::where('username', $username)
                     ->where('password', $password)
@@ -70,7 +72,7 @@ class AuthController extends Controller
         if($user){
             return response()->json($user);
         } else {
-            return response()->json('Invalid username or password!', 401);
+            return response()->json(['message' => 'Invalid username or password!'], 401); 
         }
     }
 
@@ -131,6 +133,17 @@ class AuthController extends Controller
         $user = User::find($id);
         $user->delete();
         return response()->json('User deleted successfully!');
+    }
+
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+    
+        $request->session()->invalidate();
+    
+        $request->session()->regenerateToken();
+    
+        return redirect('/');
     }
 }
 

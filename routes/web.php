@@ -15,7 +15,7 @@
 
 
 // Show ALL users
-$router->get('/users', 'AuthController@index');
+$router->get('/users', 'AuthController@index', ['middleware' => 'auth']);
 
 // Show each user by ID
 $router->get('/users/{id}', 'AuthController@show');
@@ -49,6 +49,8 @@ $router->put('/categories/update/{id}', 'CategoriesController@update');
 // Delete categories
 $router->delete('/categories/delete/{id}', 'CategoriesController@destroy');
 
+$router->get('/categories/{id}/books', 'CategoriesController@showBooksInCat');
+
 
 
 // Show ALL books
@@ -61,7 +63,7 @@ $router->get('/books/{id}', 'BooksController@show');
 $router->post('/books/create', 'BooksController@store');
 
 // Update books
-$router->post('/books/update/{id}', 'BooksController@update');
+$router->put('/books/update/{id}', 'BooksController@update');
 
 // Delete books
 $router->delete('/books/delete/{id}', 'BooksController@destroy');
