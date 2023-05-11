@@ -23,15 +23,6 @@ class Book extends Model implements AuthenticatableContract, AuthorizableContrac
         'book_title', 'author', 'category_id', 'file_id', 
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var string[]
-     */
-    // protected $hidden = [
-    //     'password',
-    // ];
-
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'category_id', 'id');

@@ -23,15 +23,6 @@ class Category extends Model implements AuthenticatableContract, AuthorizableCon
         'category_name',
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var string[]
-     */
-    // protected $hidden = [
-    //     'password',
-    // ];
-
     public function books()
     {
         return $this->hasMany(Book::class);

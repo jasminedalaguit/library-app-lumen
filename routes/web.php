@@ -43,12 +43,7 @@ $router->group([
 ], function () use ($router) {
     $router->post('login', 'AuthController@login');
     $router->post('logout', 'AuthController@logout');
-    $router->post('refresh', 'AuthController@refresh');
-    $router->post('user-profile', 'AuthController@me');
-
 });
-
-
 
 // Show ALL categories
 $router->get('/categories', 'CategoriesController@index');
@@ -70,31 +65,28 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
     // Delete categories
     $router->delete('/categories/delete/{id}', 'CategoriesController@destroy');
 
-
-    
 });
 
 
-// Show ALL books
-$router->get('/books', 'BooksController@index');
+$router->group(['middleware' => 'auth'], function () use ($router) {
+    // Show ALL books
+    $router->get('/books', 'BooksController@index');
 
-// Show each book by ID
-$router->get('/books/{id}', 'BooksController@show');
+    // Show each book by ID
+    $router->get('/books/{id}', 'BooksController@show');
 
-// Store books
-$router->post('/books/create', 'BooksController@store');
+    // Store books
+    $router->post('/books/create', 'BooksController@store');
 
-// Update books
-$router->put('/books/update/{id}', 'BooksController@update');
+    // Update books
+    $router->put('/books/update/{id}', 'BooksController@update');
 
-// Delete books
-$router->delete('/books/delete/{id}', 'BooksController@destroy');
+    // Delete books
+    $router->delete('/books/delete/{id}', 'BooksController@destroy');
 
-// Upload file 
-$router->post('/upload', 'FileController@upload');
+    // Upload file 
+    $router->post('/upload', 'FileController@upload');
 
-$router->get('/', function () use ($router) {
-    return 'hi';
 });
 
 

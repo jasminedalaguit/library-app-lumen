@@ -33,28 +33,4 @@ class User extends Model implements Authenticatable
     protected $hidden = [
         'password',
     ];
-
-    // /**
-    //  * Get the identifier that will be stored in the subject claim of the JWT.
-    //  *
-    //  * @return mixed
-    //  */
-    // public function getJWTIdentifier()
-    // {
-    //     return $this->getKey();
-    // }
-
-    // /**
-    //  * Return a key value array, containing any custom claims to be added to the JWT.
-    //  *
-    //  * @return array
-    //  */
-    // public function getJWTCustomClaims()
-    // {
-    //     return [];
-    // }
-    // public function books()
-    // {
-    //     return $this->hasMany('App\Book','user_id');
-    // }
 }

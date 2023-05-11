@@ -12,10 +12,6 @@ use Auth;
 
 class BooksController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
     /**
      * Display a listing of the resource.
      *
@@ -29,7 +25,6 @@ class BooksController extends Controller
         return response()->json($books);
     }
     
-
     /**
      * Store a newly created resource in storage.
      *
@@ -53,8 +48,6 @@ class BooksController extends Controller
        
             return response()->json('File not found.', 422);
         } 
-    
-        // $file_name = Str::kebab($request->book_title . '.pdf');
         
         $book = new Book();
             
