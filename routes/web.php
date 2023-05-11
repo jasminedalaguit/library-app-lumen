@@ -30,7 +30,23 @@ $router->post('/users/update/{id}', 'AuthController@update');
 $router->delete('/users/delete/{id}', 'AuthController@destroy');
 
 // User authentication 
-$router->post('/users/login', 'AuthController@login');
+// $router->post('/users/login', 'AuthController@login');
+
+$router->get('/', function () use ($router) {
+    return $router->app->version();
+});
+
+$router->group([
+
+    'prefix' => 'api'
+
+], function () use ($router) {
+    $router->post('login', 'AuthController@login');
+    $router->post('logout', 'AuthController@logout');
+    $router->post('refresh', 'AuthController@refresh');
+    $router->post('user-profile', 'AuthController@me');
+
+});
 
 
 
@@ -40,17 +56,23 @@ $router->get('/categories', 'CategoriesController@index');
 // Show each category by ID
 $router->get('/categories/{id}', 'CategoriesController@show');
 
-// Store categories
-$router->post('/categories/create', 'CategoriesController@store');
-
-// Update categories 
-$router->put('/categories/update/{id}', 'CategoriesController@update');
-
-// Delete categories
-$router->delete('/categories/delete/{id}', 'CategoriesController@destroy');
 
 $router->get('/categories/{id}/books', 'CategoriesController@showBooksInCat');
 
+
+$router->group(['middleware' => 'auth'], function () use ($router) {
+    // Store categories
+    $router->post('/categories/create', 'CategoriesController@store');
+
+    // Update categories 
+    $router->put('/categories/update/{id}', 'CategoriesController@update');
+
+    // Delete categories
+    $router->delete('/categories/delete/{id}', 'CategoriesController@destroy');
+
+
+    
+});
 
 
 // Show ALL books

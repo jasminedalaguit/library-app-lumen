@@ -8,9 +8,14 @@ use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Auth;
 
 class BooksController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +25,7 @@ class BooksController extends Controller
     {
         // Get all books from database
         $books = Book::with('category')->get();
-        $mybooks=[];
+        // $mybooks=[];
         return response()->json($books);
     }
     

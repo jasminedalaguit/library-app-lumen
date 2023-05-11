@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('book_title');
             $table->string('author');
             $table->string('category_id');
-            $table->string('pdf');
+            // $table->string('pdf');
+            $table->string('file_id');
             $table->timestamps();
         });
     }

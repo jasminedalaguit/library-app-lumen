@@ -7,8 +7,14 @@ use Illuminate\Validation\Rule;
 use App\Models\Category;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Arr;
+use Auth;
+
 class CategoriesController extends Controller
 {
+    public function __construct()
+    {
+        // $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *

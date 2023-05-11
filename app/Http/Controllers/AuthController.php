@@ -6,10 +6,25 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Users;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
+
 
 class AuthController extends Controller
 {
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
+    /**
+     * Get a JWT via given credentials.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+
     /**
      * Display a listing of the resource.
      *
@@ -49,7 +64,7 @@ class AuthController extends Controller
         $user->lastname = $request->input('lastname');
         $user->email = $request->input('email');
         $user->username = $request->input('username');
-        $user->password = md5($request->input('password'));
+        $user->password = Hash::make($request->input('password'));
 
         $user->save();
         return response()->json($user);
@@ -58,23 +73,38 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $this->validate($request, [
-            'username' => 'required',
-            'password' => 'required',
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        $username = $request->input('username');
-        $password = md5($request->input('password')); 
-         
-        $user = User::where('username', $username)
-                    ->where('password', $password)
-                    ->first();
+        // $credentials = $request->only(['username', 'password']);
 
-        if($user){
-            return response()->json($user);
-        } else {
-            return response()->json(['message' => 'Invalid username or password!'], 401); 
+        
+        // $username = $request->input('username');
+        // $password = $request->input('password'); 
+         
+        // $user = User::where('username', $username)
+        //             ->where('password', $password)
+        //             ->first();
+                    
+        // if (!$token = Auth::attempt($credentials)) {
+        //     return response()->json(['message' => 'Invalid credentials'], 401);
+        // }
+       
+        // return $this->jsonResponse($token);
+        
+        $user = User::where('username', $request->input('username'))->first();
+        if($user && Hash::check($request->input('password'), $user->password)){
+            $apikey = base64_encode(Str::random(40));
+            User::where('username', $request->input('username'))->update(['api_key' => "$apikey"]);;
+            return response()->json(['status' => 'success','api_key' => $apikey]);
+        }else{
+            return response()->json(['status' => 'Invalid username or password!'],401);
         }
-    }
+     }
+
+     
+    
 
     /**
      * Display the specified resource.
@@ -135,17 +165,85 @@ class AuthController extends Controller
         return response()->json('User deleted successfully!');
     }
 
-    public function logout(Request $request): RedirectResponse
+    // public function logout(Request $request): RedirectResponse
+    // {
+    //     Auth::logout();
+    
+    //     $request->session()->invalidate();
+    
+    //     $request->session()->regenerateToken();
+    
+    //     return redirect('/');
+    // }
+
+     /**
+     * Get the authenticated User.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me()
     {
-        Auth::logout();
-    
-        $request->session()->invalidate();
-    
-        $request->session()->regenerateToken();
-    
-        return redirect('/');
+        return response()->json(auth()->user());
+    }
+
+    /**
+     * Log the user out (Invalidate the token).
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    // public function logout()
+    // {
+    //     auth()->logout();
+
+    //     return response()->json(['message' => 'Successfully logged out']);
+    // }
+
+    public function logout(Request $request) {
+        $apikey = $request->header('Authorization');
+
+
+        $test = explode(' ',$request->header('Authorization'));
+        // dd($test); 
+
+        $user = User::where('api_key', $test[1])->first();
+        
+        if ($user) {
+            $user->api_key = null;
+            $user->save();
+        return response()->json(['status' => 'success']);
+        } else {
+        return response()->json(['status' => 'fail'], 401);
+        }
+    }
+
+    /**
+     * Refresh a token.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function refresh()
+    {
+        return $this->jsonResponse(auth()->refresh());
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    protected function jsonResponse($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type'   => 'bearer',
+            'user'         => auth()->user(),
+            'expires_in'   => auth()->factory()->getTTL() * 60 * 24
+        ]);
     }
 }
+
 
 
 
